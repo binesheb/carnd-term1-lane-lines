@@ -28,6 +28,10 @@ jupyter lab
 
 Open one of the notebooks under `CarND/` and run it interactively. Because these are historical notebooks, dependency or API changes may require small compatibility fixes on newer Python releases.
 
+### Dependency maintenance
+
+This archived repository does not maintain a locked historical environment. Install current, supported releases of the packages above rather than reviving the original 2017 package stack. If a future compatibility fix requires pinning a package, the pin should be documented here and kept as narrow as possible; deprecated or unmaintained packages should not be reintroduced merely to reproduce the old coursework environment.
+
 ## Update policy
 
 This repository is primarily an archived learning project, so it does not update itself or modify your environment automatically. To safely obtain the latest maintained copy:
