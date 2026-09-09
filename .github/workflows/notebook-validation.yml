@@ -27,12 +27,34 @@ jobs:
           if not notebooks:
               raise SystemExit("No notebooks found under CarND/")
 
+          allowed_cell_types = {"code", "markdown", "raw"}
+
           for notebook in notebooks:
               with notebook.open(encoding="utf-8") as handle:
                   document = json.load(handle)
-              if document.get("nbformat") not in (4,):
+
+              if document.get("nbformat") != 4:
                   raise SystemExit(f"Unsupported or missing nbformat in {notebook}")
-              if "cells" not in document:
+              if not isinstance(document.get("nbformat_minor"), int):
+                  raise SystemExit(f"Missing or invalid nbformat_minor in {notebook}")
+
+              cells = document.get("cells")
+              if not isinstance(cells, list):
                   raise SystemExit(f"Missing cells array in {notebook}")
 
-          print(f"Validated {len(notebooks)} notebook(s).")
+              for index, cell in enumerate(cells):
+                  if not isinstance(cell, dict):
+                      raise SystemExit(f"Cell {index} is not an object in {notebook}")
+                  if cell.get("cell_type") not in allowed_cell_types:
+                      raise SystemExit(f"Invalid cell_type at {notebook}:{index}")
+                  if not isinstance(cell.get("source"), (str, list)):
+                      raise SystemExit(f"Invalid source at {notebook}:{index}")
+
+                  if cell["cell_type"] == "code":
+                      if not isinstance(cell.get("outputs", []), list):
+                          raise SystemExit(f"Invalid outputs at {notebook}:{index}")
+                      execution_count = cell.get("execution_count")
+                      if execution_count is not None and not isinstance(execution_count, int):
+                          raise SystemExit(f"Invalid execution_count at {notebook}:{index}")
+
+          print(f"Validated {len(notebooks)} notebook(s), including cell structure.")
